@@ -11,5 +11,6 @@ dependencies:
   - flake8
   - autopep8
   - openpyxl
+  - jupyter
 prefix: C:\tools\Anaconda3\envs\covidttr
 
