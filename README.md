@@ -1,5 +1,7 @@
 # covid-19-time-to-recovery
 
+[![DOI](https://zenodo.org/badge/248425825.svg)](https://zenodo.org/badge/latestdoi/248425825)
+
 This repository contains the code of the calculations described in the paper: "__A Method of Estimating Time-to-Recovery for a Disease Caused by a Contagious Pathogen like SARS-CoV-2 using a Time Series of Aggregated Case Reports__"
 
 Authors: Stavros Pitoglou [1, 2], Dimitrios-Dionysios Koutsouris [1]
