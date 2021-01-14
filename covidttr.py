@@ -9,7 +9,7 @@ def load_remote_data(category: str) -> pandas.DataFrame:
     url = "https://raw.githubusercontent.com/" \
         "CSSEGISandData/COVID-19/master/" \
         "csse_covid_19_data/csse_covid_19_time_series/" \
-        "time_series_19-covid-{}.csv".format(category)
+        "time_series_covid19_{}_global.csv".format(category)
     df = pandas.read_csv(url)
     df.set_index(["Country/Region"], inplace=True)
     # calculate sums for each country/region (distorts the spatial data (lat, long))
@@ -194,9 +194,9 @@ def run_country(country: str, print_case_by_case=False, print_sets=False):
 
 if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
-    confirmed = load_remote_data('Confirmed')
-    deaths = load_remote_data('Deaths')
-    recovered = load_remote_data('Recovered')
+    confirmed = load_remote_data('confirmed')
+    deaths = load_remote_data('deaths')
+    recovered = load_remote_data('recovered')
 
     # logger.info(recovered)
     countries = [
