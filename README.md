@@ -24,6 +24,10 @@ In the root of the project there is a platform independent ```environmnet.yml```
 
 You can find up-to-date instructions on how to install and activate it [here (conda documentation)](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file).
 
+#### pip libraries
+
+```pip install alive-progress``` 
+
 ### Usage
 #### Calculations
 First navigate to the project's folder.  

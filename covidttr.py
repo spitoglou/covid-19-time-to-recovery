@@ -3,6 +3,7 @@ from statistics import mean, stdev
 import pprint
 import pandas
 from loguru import logger
+from alive_progress import alive_bar
 
 
 def load_remote_data(category: str) -> pandas.DataFrame:
@@ -68,60 +69,62 @@ def interval_sets(confirmed, deaths, recovered, no_days, verbose=True):
     continue_loop = True
     intervals = []
     unmatched_intervals = []
-    while continue_loop:
-        if verbose:
-            print('-' * 30)
-            print('Remaining Confirmed: {}'.format(len(confirmed)))
-            print('Remaining Deaths: {}'.format(len(deaths)))
-            print('Remaining Recovered: {}'.format(len(recovered)))
-        if len(confirmed) > 0:
-            confcase = confirmed.pop(0)
+    with alive_bar(len(confirmed) + 1, bar='checks') as bar:
+        while continue_loop:
+            bar()
             if verbose:
-                print('Current Confirmed Case - Day {}'.format(confcase))
-            if len(deaths) > 0 and len(recovered) > 0:
+                print('-' * 30)
+                print('Remaining Confirmed: {}'.format(len(confirmed)))
+                print('Remaining Deaths: {}'.format(len(deaths)))
+                print('Remaining Recovered: {}'.format(len(recovered)))
+            if len(confirmed) > 0:
+                confcase = confirmed.pop(0)
                 if verbose:
-                    print('Both deaths and recoveries exist')
-                if min(deaths) > min(recovered):
-                    reccase = recovered.pop(0)
+                    print('Current Confirmed Case - Day {}'.format(confcase))
+                if len(deaths) > 0 and len(recovered) > 0:
                     if verbose:
-                        print('Earliest existing recovery - Day {}'.format(reccase))
-                    to_append = reccase - confcase
-                    intervals.append(to_append)
-                else:
+                        print('Both deaths and recoveries exist')
+                    if min(deaths) > min(recovered):
+                        reccase = recovered.pop(0)
+                        if verbose:
+                            print('Earliest existing recovery - Day {}'.format(reccase))
+                        to_append = reccase - confcase
+                        intervals.append(to_append)
+                    else:
+                        deathcase = deaths.pop(0)
+                        if verbose:
+                            print('Earliest existing death - Day {}'.format(deathcase))
+                        to_append = deathcase - confcase
+                        intervals.append(to_append)
+                elif len(deaths) > 0 and len(recovered) == 0:
                     deathcase = deaths.pop(0)
                     if verbose:
                         print('Earliest existing death - Day {}'.format(deathcase))
                     to_append = deathcase - confcase
                     intervals.append(to_append)
-            elif len(deaths) > 0 and len(recovered) == 0:
-                deathcase = deaths.pop(0)
-                if verbose:
-                    print('Earliest existing death - Day {}'.format(deathcase))
-                to_append = deathcase - confcase
-                intervals.append(to_append)
-            elif len(deaths) == 0 and len(recovered) > 0:
-                reccase = recovered.pop(0)
-                if verbose:
-                    print('Earliest existing recovery - Day {}'.format(reccase))
-                to_append = reccase - confcase
-                intervals.append(to_append)
+                elif len(deaths) == 0 and len(recovered) > 0:
+                    reccase = recovered.pop(0)
+                    if verbose:
+                        print('Earliest existing recovery - Day {}'.format(reccase))
+                    to_append = reccase - confcase
+                    intervals.append(to_append)
 
+                else:
+                    if verbose:
+                        print(
+                            'Unmatched confirmed case \nTotal No of days : {}'.format(no_days))
+                    to_append = no_days - confcase
+                    unmatched_intervals.append(to_append)
+                if verbose:
+                    print('Appended value : {}'.format(to_append))
             else:
-                if verbose:
-                    print(
-                        'Unmatched confirmed case \nTotal No of days : {}'.format(no_days))
-                to_append = no_days - confcase
-                unmatched_intervals.append(to_append)
-            if verbose:
-                print('Appended value : {}'.format(to_append))
-        else:
-            continue_loop = False
+                continue_loop = False
 
-        # print(confcase)
-    return {
-        'matched': intervals,
-        'unmatched': unmatched_intervals
-    }
+            # print(confcase)
+        return {
+            'matched': intervals,
+            'unmatched': unmatched_intervals
+        }
 
 
 def run_country(country: str, print_case_by_case=False, print_sets=False):
